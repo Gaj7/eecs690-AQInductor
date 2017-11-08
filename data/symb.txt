@@ -1,0 +1,8 @@
+< a a a d >
+[ Capacity Noise Comfort Quality ]
+five high low low
+five low medium medium
+five high medium medium
+four low low medium
+four low medium low
+four high medium low

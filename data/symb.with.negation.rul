@@ -1,0 +1,5 @@
+(Comfort, not medium) & (Capacity, not four) -> (Quality, low)
+(Capacity, not five) & (Comfort, not low) -> (Quality, low)
+(Noise, not high) & (Capacity, not four) -> (Quality, medium)
+(Comfort, not low) & (Capacity, not four) -> (Quality, medium)
+(Capacity, not five) & (Comfort, not medium) -> (Quality, medium)

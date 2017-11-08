@@ -1,0 +1,5 @@
+(B, not 1.1) & (A, not 1.2) & (A, not 2.0) -> (D, very-small)
+(B, not 0.3) & (C, not 10.2) & (A, not 2.0) -> (D, small)
+(C, not 7.2) & (A, not 2.0) -> (D, medium)
+(A, not 0.8) & (A, not 1.2) & (C, not 15.2) -> (D, high)
+(A, not 0.8) & (B, not 0.3) & (C, not 10.2) -> (D, very-high)
