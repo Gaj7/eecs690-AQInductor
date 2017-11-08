@@ -1,4 +1,0 @@
-! The input data set is inconsistent
-(Comfort, not medium) & (Capacity, not four) -> (Quality, low)
-(Capacity, not five) & (Comfort, not low) -> (Quality, low)
-(Comfort, not low) & (Capacity, not four) -> (Quality, medium)
