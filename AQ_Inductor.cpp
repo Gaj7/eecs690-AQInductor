@@ -15,7 +15,6 @@ std::string AQ_Inductor::stripFileExtenstion(std::string s){
 		return s;
 }
 
-//not working as intended -- returning true always?
 /*
 	foreach complex in star
 		if any complex covers case, return true
