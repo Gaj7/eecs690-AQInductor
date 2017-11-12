@@ -37,6 +37,33 @@ std::string DataParser::gitGudWord(std::string &line){
 	return std::string();
 }
 
+//std::stod works for extracting doubles, but it doesn't give any feedback as to whether or not the passed string is *exactly* a number with no other extraneous characters. For example, it might read 25 from "25..30" when we don't even want to consider that string a number
+bool DataParser::isNum(std::string s){
+	bool foundDot = false;
+
+	for (unsigned int i = 0; i < s.length(); i++){
+		if (s[i] == '-'){
+			if (i != 0)
+				return false;
+		}
+		else if (s[i] == '.'){
+			if (foundDot)
+				return false;
+			else
+				foundDot = true;
+		}
+		else if (s[i] != '0' && s[i] != '1' && s[i] != '2' && s[i] != '3' && s[i] != '4' && s[i] != '5' && s[i] != '6' && s[i] != '7' && s[i] != '8' && s[i] != '9')
+			return false;
+	}
+
+	return true;
+}
+
+int DataParser::discretizeAttribute(int attrIdx){
+	if (debug) std::cout << "Attribute " << attributeNames[attrIdx] << " flagged for discretization\n";
+	return 0;
+}
+
 void DataParser::printTable(){
 	//data table
 	std::cout << "dataTable:\n(";
@@ -66,6 +93,7 @@ void DataParser::printTable(){
 			std::cout << conceptCases[i][j] << "|";
 		std::cout << "\n";
 	}
+	std::cout << std::endl;
 }
 
 
@@ -99,7 +127,6 @@ DataParser::~DataParser(){
 	//close file
 	if(fs.is_open())
 		fs.close();
-
 }
 
 
@@ -165,8 +192,16 @@ void DataParser::buildTable(){
 	/*DEBUG:*/ if(debug) printTable();
 }
 
+//NOTE: only checks one value per attribute for discretization. It is assumed that an attribute with numbers for values will have only numbers for values
 void DataParser::discretizeData(){
-	for (unsigned int i = 0; i < dataTable.size(); i++){	//note this loop will check dataTable.size() each iteration, so we can safely loop through even while changing the size
-		return;//temp filler
+	for (unsigned int i = 0; i < attributeValues.size(); i++){	//note this loop will check attributeValues.size() each iteration, so we can safely loop through even while changing the size
+		if (isNum(attributeValues[i][0])){
+			i += discretizeAttribute(i); //increments counter according to number of added attributes. No need to check already discretized attributes.
+		}
+	}
+
+	if (debug){
+		std::cout << "Discretized data table\n";
+		printTable();
 	}
 }

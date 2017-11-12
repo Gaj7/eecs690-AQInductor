@@ -12,12 +12,12 @@ class DataParser {
 
 		//gets the next non-comment line, throws an exception on eof
 		std::string gitGudLine();
-
 		//returns a substring of the first sequence of chars separated by whitespace, modifies line to remove returned substring
 		//returns empty string if no word in string
 		std::string gitGudWord(std::string &line);
 
-		void discretizeAttribute(int attrIdx);
+		bool isNum(std::string str);
+		int discretizeAttribute(int attrIdx);
 
 		//just for debugging
 		void printTable();
