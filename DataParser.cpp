@@ -90,7 +90,7 @@ DataParser::DataParser(std::string fileName, bool debug=false){
 		attributeNames[i] = gitGudWord(inpStr);
 	decisionName = gitGudWord(inpStr);
 
-	attributeValues = new std::vector<std::string>[n_attributes];
+	attributeValues.resize(n_attributes);
 	this->debug = debug;
 }
 
@@ -100,8 +100,6 @@ DataParser::~DataParser(){
 	if(fs.is_open())
 		fs.close();
 
-	//delete stuff
-	delete[] attributeValues;
 }
 
 
@@ -168,5 +166,7 @@ void DataParser::buildTable(){
 }
 
 void DataParser::discretizeData(){
-
+	for (unsigned int i = 0; i < dataTable.size(); i++){	//note this loop will check dataTable.size() each iteration, so we can safely loop through even while changing the size
+		return;//temp filler
+	}
 }

@@ -17,6 +17,8 @@ class DataParser {
 		//returns empty string if no word in string
 		std::string gitGudWord(std::string &line);
 
+		void discretizeAttribute(int attrIdx);
+
 		//just for debugging
 		void printTable();
 
@@ -25,7 +27,7 @@ class DataParser {
 		std::vector<std::string> attributeNames;
 		std::string decisionName;
 		std::vector<std::vector<std::string>> dataTable;
-		std::vector<std::string>* attributeValues; //grouped in same order as attributeNames
+		std::vector<std::vector<std::string>> attributeValues; //grouped in same order as attributeNames
 		std::vector<std::string> conceptNames;
 		std::vector<std::vector<int>> conceptCases; //grouped in same order as conceptNames
 
