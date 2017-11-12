@@ -70,7 +70,7 @@ void DataParser::printTable(){
 
 
 //Public functions
-DataParser::DataParser(std::string fileName){
+DataParser::DataParser(std::string fileName, bool debug=false){
 	//open file
 	fs.open(fileName, std::ifstream::in);
 	if(!fs){
@@ -80,9 +80,9 @@ DataParser::DataParser(std::string fileName){
 
 	std::string inpStr = gitGudLine();
 
-	//we will just assume first line is a series of 'a's and one d at the end, as per the project inpStructions
+	//we will just assume first line is a series of 'a's and one d at the end, as per the project inpstructions
 	n_attributes = (inpStr.length()-5)/2; //we just need to calc the number of 'a's
-	attributeNames = new std::string[n_attributes];
+	attributeNames.resize(n_attributes);
 
 	inpStr = gitGudLine();
 	inpStr = inpStr.substr(2, inpStr.length()-4); //trim off brackets
@@ -91,6 +91,7 @@ DataParser::DataParser(std::string fileName){
 	decisionName = gitGudWord(inpStr);
 
 	attributeValues = new std::vector<std::string>[n_attributes];
+	this->debug = debug;
 }
 
 
@@ -100,45 +101,37 @@ DataParser::~DataParser(){
 		fs.close();
 
 	//delete stuff
-	delete[] attributeNames;
 	delete[] attributeValues;
-	//delete string arrays in vectors
-	for(unsigned int i = 0; i < dataTable.size(); i++)
-		delete[] dataTable[i];
 }
 
 
-//returns nullpointer if eof
-std::string* DataParser::parseRow(){
+//returns empty vector if eof
+std::vector<std::string> DataParser::parseRow(){
 	std::string inpStr;
 	try{
 		inpStr = gitGudLine();
 	} catch (std::string e) {
-		return nullptr;
+		return std::vector<std::string>(0);  //empty vector
 	}
 
-	std::string* row = new std::string[n_attributes+1];
+	std::vector<std::string> row(n_attributes+1);
 
 	for(int i = 0; i < n_attributes; i++){
 		row[i] = gitGudWord(inpStr);
-		if(row[i].empty()){
-			delete[] row;
-			return nullptr;
-		}
+		if(row[i].empty())
+			return std::vector<std::string>(0);  //empty vector
 	}
 	row[n_attributes] = gitGudWord(inpStr);
-	if(row[n_attributes].empty()){
-		delete[] row;
-		return nullptr;
-	}
+	if(row[n_attributes].empty())
+		return std::vector<std::string>(0);  //empty vector
 
 	return row;
 }
 
 //NOTE: technically, if file was extended, this could be re-called to add to dataTable
-void DataParser::buildTable(bool debug = false){
+void DataParser::buildTable(){
 	//loop through rows from file read in
-	for (std::string* row = parseRow(); row != nullptr; row = parseRow()){
+	for (std::vector<std::string> row = parseRow(); !row.empty(); row = parseRow()){
 		///add to table
 		dataTable.push_back(row);
 
@@ -174,7 +167,6 @@ void DataParser::buildTable(bool debug = false){
 	/*DEBUG:*/ if(debug) printTable();
 }
 
+void DataParser::discretizeData(){
 
-int DataParser::getNumOfAttributes(){
-	return n_attributes;
 }

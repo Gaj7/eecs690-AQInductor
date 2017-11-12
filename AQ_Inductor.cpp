@@ -86,8 +86,9 @@ AQ_Inductor::AQ_Inductor(std::string fileName, bool debug = false){
 	this->debug = debug;
 
 	//could chnage dp from pointer to reference now that it is outside of try block. lots to edit though, do it later
-	dp = new DataParser(fileName); //took out of try/catch block so that it would be caught deeper down
-  dp->buildTable(debug);
+	dp = new DataParser(fileName, debug); //took out of try/catch block so that it would be caught deeper down
+  dp->buildTable();
+	dp->discretizeData();
 
 	//not sure where to put this:
 	isConsistent = calcConsistency();

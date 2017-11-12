@@ -7,6 +7,7 @@
 
 class DataParser {
 	private:
+		bool debug;
 		std::ifstream fs;
 
 		//gets the next non-comment line, throws an exception on eof
@@ -21,21 +22,20 @@ class DataParser {
 
 	public:
 		int n_attributes;
-		std::string* attributeNames;
+		std::vector<std::string> attributeNames;
 		std::string decisionName;
-		std::vector<std::string*> dataTable;
+		std::vector<std::vector<std::string>> dataTable;
 		std::vector<std::string>* attributeValues; //grouped in same order as attributeNames
 		std::vector<std::string> conceptNames;
 		std::vector<std::vector<int>> conceptCases; //grouped in same order as conceptNames
 
-		DataParser(std::string fileName);
+		DataParser(std::string fileName, bool debug);
 		~DataParser();
 
-		std::string* parseRow();
+		std::vector<std::string> parseRow();
 
-		void buildTable(bool debug);
-
-		int getNumOfAttributes();
+		void buildTable();
+		void discretizeData();
 
 };
 

@@ -15,3 +15,7 @@ Star.o: Star.hpp Star.cpp
 
 clean:
 	rm *.o project
+
+clean-output: #assumes all input files reside in a subfolder "data"
+	rm data/*.with.negation.rul
+	rm data/*.without.negation.rul
