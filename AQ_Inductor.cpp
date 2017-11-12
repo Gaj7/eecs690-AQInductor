@@ -37,7 +37,7 @@ bool AQ_Inductor::isCovered(int caseIdx, Star star){
 		if (coveredByComplex)
 			return true;
 	}
-	//not covered by and complexes:
+	//not covered by any complexes:
 	return false;
 }
 

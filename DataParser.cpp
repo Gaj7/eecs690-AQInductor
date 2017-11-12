@@ -75,9 +75,9 @@ int DataParser::discretizeAttribute(int attrIdx){
 	if (debug) std::cout << "Attribute " << attributeNames[attrIdx] << " flagged for discretization\n";
 
 	//store attibute column
-	std::vector<std::string> attrColumn(dataTable.size());
+	std::vector<double> attrColumn(dataTable.size());
 	for (unsigned int i = 0; i < dataTable.size(); i++)
-		attrColumn[i] = dataTable[i][attrIdx];
+		attrColumn[i] = std::stod(dataTable[i][attrIdx]);
 
 	//find cutpoints
 	std::priority_queue<double, std::vector<double>, std::greater<double>> min_q;
@@ -108,19 +108,31 @@ int DataParser::discretizeAttribute(int attrIdx){
 
 	//expand and overwrite attributeNames
 	std::string oldName = attributeNames[attrIdx];
-	attributeNames.insert(attributeNames.begin()+attrIdx+1, cutpoints.size()-1, "test");
+	attributeNames.insert(attributeNames.begin()+attrIdx+1, cutpoints.size()-1, "");
 	for (unsigned int i = 0; i < cutpoints.size(); i++)
 		attributeNames[attrIdx+i] = oldName + "_" + doubleToStr(cutpoints[i]);
 
 	//expand and overwrite attributeValues
 	attributeValues.insert(attributeValues.begin()+attrIdx+1, cutpoints.size()-1, std::vector<std::string>());
+	for (unsigned int i = 0; i < cutpoints.size(); i++){
+		std::vector<std::string> vec(2);
+		vec[0] = doubleToStr(lowest) + ".." + doubleToStr(cutpoints[i]);
+		vec[1] = doubleToStr(cutpoints[i]) + ".." + doubleToStr(highest);
+		attributeValues[attrIdx+i] = vec;
+	}
 
 	//expand and overwrite dataTable
-	for (unsigned int i = 0; i < dataTable.size(); i++)
-		dataTable[i].insert(dataTable[i].begin()+attrIdx+1, cutpoints.size()-1, "TEST");
+	for (unsigned int i = 0; i < dataTable.size(); i++){
+		dataTable[i].insert(dataTable[i].begin()+attrIdx+1, cutpoints.size()-1, "");
+		for (unsigned int j = 0; j < cutpoints.size(); j++){
+			if (attrColumn[i] < cutpoints[j])
+				dataTable[i][attrIdx+j] = doubleToStr(lowest) + ".." + doubleToStr(cutpoints[j]);
+			else
+				dataTable[i][attrIdx+j] = doubleToStr(cutpoints[j]) + ".." + doubleToStr(highest);
+		}
+	}
 
 	n_attributes += cutpoints.size()-1;
-	std::cout << n_attributes << std::endl;
 	return cutpoints.size()-1;
 }
 
