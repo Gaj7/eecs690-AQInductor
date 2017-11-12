@@ -59,9 +59,69 @@ bool DataParser::isNum(std::string s){
 	return true;
 }
 
+//trim result from std::to_string
+std::string DataParser::doubleToStr(double num){
+	std::string str = std::to_string(num);
+
+	unsigned int trimPos;
+	for (trimPos = str.length()-1; trimPos >= 0; trimPos--)
+		if(str[trimPos] != '0' && str[trimPos] != '.')
+			break;
+
+	return str.substr(0, trimPos+1);
+}
+
 int DataParser::discretizeAttribute(int attrIdx){
 	if (debug) std::cout << "Attribute " << attributeNames[attrIdx] << " flagged for discretization\n";
-	return 0;
+
+	//store attibute column
+	std::vector<std::string> attrColumn(dataTable.size());
+	for (unsigned int i = 0; i < dataTable.size(); i++)
+		attrColumn[i] = dataTable[i][attrIdx];
+
+	//find cutpoints
+	std::priority_queue<double, std::vector<double>, std::greater<double>> min_q;
+	for (unsigned int i = 0; i < attributeValues[attrIdx].size(); i++)
+		min_q.push(std::stod(attributeValues[attrIdx][i]));
+
+	std::vector<double> cutpoints(min_q.size()-1);
+	double lowest, highest;
+
+	lowest = min_q.top();
+	double prevValue = lowest;
+	min_q.pop();
+	for (unsigned int i = 0; i <= min_q.size(); i++){
+		cutpoints[i] = (prevValue + min_q.top())/2;
+		prevValue = min_q.top();
+		min_q.pop();
+	}
+	highest = prevValue;
+
+	if (debug){ //debug print
+		std::cout << "cutpoints: ";
+		for (unsigned int i = 0; i < cutpoints.size(); i++)
+			std::cout << cutpoints[i] << " ";
+		std::cout << std::endl;
+	}
+
+	//NOTE: number of attributes = cutpoints.size()
+
+	//expand and overwrite attributeNames
+	std::string oldName = attributeNames[attrIdx];
+	attributeNames.insert(attributeNames.begin()+attrIdx+1, cutpoints.size()-1, "test");
+	for (unsigned int i = 0; i < cutpoints.size(); i++)
+		attributeNames[attrIdx+i] = oldName + "_" + doubleToStr(cutpoints[i]);
+
+	//expand and overwrite attributeValues
+	attributeValues.insert(attributeValues.begin()+attrIdx+1, cutpoints.size()-1, std::vector<std::string>());
+
+	//expand and overwrite dataTable
+	for (unsigned int i = 0; i < dataTable.size(); i++)
+		dataTable[i].insert(dataTable[i].begin()+attrIdx+1, cutpoints.size()-1, "TEST");
+
+	n_attributes += cutpoints.size()-1;
+	std::cout << n_attributes << std::endl;
+	return cutpoints.size()-1;
 }
 
 void DataParser::printTable(){
@@ -201,7 +261,7 @@ void DataParser::discretizeData(){
 	}
 
 	if (debug){
-		std::cout << "Discretized data table\n";
+		std::cout << "Discretized data table:\n";
 		printTable();
 	}
 }

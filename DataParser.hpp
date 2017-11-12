@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <queue>
 
 class DataParser {
 	private:
@@ -16,7 +17,8 @@ class DataParser {
 		//returns empty string if no word in string
 		std::string gitGudWord(std::string &line);
 
-		bool isNum(std::string str);
+		bool isNum(std::string s);
+		std::string doubleToStr(double num);
 		int discretizeAttribute(int attrIdx);
 
 		//just for debugging
