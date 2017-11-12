@@ -1,7 +1,6 @@
 #ifndef AQ_Inductor_HPP
 #define AQ_Inductor_HPP
 
-#include <iostream>
 #include <fstream>
 #include <vector>
 #include "DataParser.hpp"
@@ -10,7 +9,7 @@
 class AQ_Inductor {
 	private:
 		//Variables
-		std::ofstream fs;
+		std::fstream fs;
     std::string fileName;
 		bool debug;
 

@@ -92,8 +92,6 @@ int DataParser::discretizeAttribute(int attrIdx){
 	lowest = min_q.top();
 	double prevValue = lowest;
 	min_q.pop();
-	// for (unsigned int i = 0; i <= min_q.size(); i++){
-	// 	cutpoints[i] = (prevValue + min_q.top())/2;
 	while(!min_q.empty()){
 		cutpoints.push_back((prevValue + min_q.top())/2);
 		prevValue = min_q.top();

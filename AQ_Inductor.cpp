@@ -89,7 +89,8 @@ AQ_Inductor::AQ_Inductor(std::string fileName, bool debug = false){
 	dp = new DataParser(fileName, debug); //took out of try/catch block so that it would be caught deeper down
   dp->buildTable();
 	isConsistent = calcConsistency(); //seems to me consistency won't be affected by discretization, and the non-discretized table will be less complex
-	dp->discretizeData();
+	if (isConsistent)
+		dp->discretizeData();
 }
 
 AQ_Inductor::~AQ_Inductor(){
@@ -105,6 +106,8 @@ void AQ_Inductor::runAQ(int maxstar){
     throw std::string("Maxstar must be 1 or higher.\n");
     return;
   }
+	if (!isConsistent)
+		return;
 
   //run partial for each concept
 	for (unsigned int i = 0; i < dp->conceptNames.size(); i++){ //foreach concept
@@ -151,15 +154,18 @@ void AQ_Inductor::runAQ(int maxstar){
 
 void AQ_Inductor::writeWithNeg(){
   //open file (create/overwrite)
-  fs.open(stripFileExtenstion(fileName) + ".with.negation.rul", std::ifstream::out);
-  if(!fs){
+	fs.open(stripFileExtenstion(fileName) + ".with.negation.rul", std::fstream::out);
+  if(fs.fail()){
     throw std::string("Ugh... something went wrong. Insufficient permission maybe?\n");
     return;
   }
 
   //write
-	if (!isConsistent)
+	if (!isConsistent){
   	fs << "! The input data set is inconsistent\n";
+		fs.close();
+		return;
+	}
 
 	//loop through conceptStars and convert to rule
 	for (unsigned int i = 0; i < dp->conceptNames.size(); i++){	//foreach concept star
@@ -178,15 +184,18 @@ void AQ_Inductor::writeWithNeg(){
 
 void AQ_Inductor::writeWithoutNeg(){
   //open file (create/overwrite)
-  fs.open(stripFileExtenstion(fileName) + ".without.negation.rul", std::ifstream::out);
-  if(!fs){
+	fs.open(stripFileExtenstion(fileName) + ".without.negation.rul", std::fstream::out);
+	if(fs.fail()){
     throw std::string("Ugh... something went wrong. Insufficient permission maybe?\n");
     return;
   }
 
   //write
-	if(!isConsistent)
+	if (!isConsistent){
   	fs << "! The input data set is inconsistent\n";
+		fs.close();
+		return;
+	}
 
 	// //loop through conceptStars and convert to rule
 	// for (unsigned int i = 0; i < conceptStars.size(); i++){ //foreach concept
