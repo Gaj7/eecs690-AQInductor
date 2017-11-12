@@ -88,10 +88,8 @@ AQ_Inductor::AQ_Inductor(std::string fileName, bool debug = false){
 	//could chnage dp from pointer to reference now that it is outside of try block. lots to edit though, do it later
 	dp = new DataParser(fileName, debug); //took out of try/catch block so that it would be caught deeper down
   dp->buildTable();
+	isConsistent = calcConsistency(); //seems to me consistency won't be affected by discretization, and the non-discretized table will be less complex
 	dp->discretizeData();
-
-	//not sure where to put this:
-	isConsistent = calcConsistency();
 }
 
 AQ_Inductor::~AQ_Inductor(){

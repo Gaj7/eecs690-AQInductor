@@ -8,7 +8,6 @@ How to use this program:
 
 ------------------------------------------------------------------------------------
 TODO:
-- convert numbers to symbols/ranges
 - implement generation of rules without negation
 - select maxstar by best (most cases covered)
 
@@ -18,7 +17,8 @@ TODO:
   - rework Star::simplify() such that elements can be checked right before being added rather than at the end
   - bottleneck: sets that get bloated af, seems like it happens in partialStar function before reduced. Disjunction on thick sets is super costly
 
-COMPLETED:
-- fix isCovered and re-add appropriate checks - seems good now
-- make star concat(union) not add redundant entries - looks like its working - could use more tests though
-- calc if dataset is consistent (will this effect aq?) - seems to be working
+COMPLETED, but could use more tests:
+- fix isCovered and re-add appropriate checks
+- make star concat(union) not add redundant entries
+- calc if dataset is consistent (will this effect aq?)
+- implement discretization
