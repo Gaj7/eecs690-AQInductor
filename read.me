@@ -13,12 +13,10 @@ TODO:
 
 - after core functionality is done, might need to work on optimization
   - I imagine switching complex vectors to queues would greatly reduce complexity of simplify() as a result of not having to call erase()
-  - maybe make star store index of attitude rather than name (made me loop a couple times through attitudes)
   - rework Star::simplify() such that elements can be checked right before being added rather than at the end
-  - bottleneck: sets that get bloated af, seems like it happens in partialStar function before reduced. Disjunction on thick sets is super costly
 
 COMPLETED, but could use more tests:
 - fix isCovered and re-add appropriate checks
 - make star concat(union) not add redundant entries
-- calc if dataset is consistent (will this effect aq?)
+- calc if dataset is consistent
 - implement discretization

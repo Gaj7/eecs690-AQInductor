@@ -26,6 +26,9 @@ class Star {
 		void reduce(int maxstar);
 		void concat(Star s); //union is a keyword apparently
 
+		//returns a new star which is an inversion of *this
+		Star invert(std::vector<std::string> attributeNames, std::vector<std::vector<std::string>> attributeValues);
+
 		//debug:
 		void print();
 

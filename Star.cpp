@@ -125,6 +125,35 @@ void Star::concat(Star s){
   simplify();
 }
 
+Star Star::invert(std::vector<std::string> attributeNames, std::vector<std::vector<std::string>> attributeValues){
+  Star inverted;
+  for (unsigned int i = 0; i < complexes.size(); i++){      //foreach complex
+    //generate list of values for each selector
+    std::vector<std::vector<std::string>> selectorValues;
+    std::vector<std::string> selectorNames;
+    for (unsigned int j = 0; j < complexes[i].size(); j++){ //foreach selector
+      unsigned int attrIdx;
+      for (attrIdx = 0; attributeNames[attrIdx] != complexes[i][j].attrName; attrIdx++); //NOTE: absolutely zero protection here. If the complex somehow doesn't have an attrName that exists in attributeNames, the program WILL seg fault
+      selectorValues.resize(selectorValues.size()+1);
+      selectorNames.push_back(attributeNames[attrIdx]);
+      for (unsigned int k = 0; k < attributeValues[attrIdx].size(); k++)
+        if (attributeValues[attrIdx][k] != complexes[i][j].negValue)
+          selectorValues[j].push_back(attributeValues[attrIdx][k]);
+    }
+
+    //expand complex into multiple complexes using list of selector values
+    for (unsigned int j = 0; j < selectorValues.size(); j++){ //foreach selector
+      inverted.complexes.resize(inverted.complexes.size()+1);
+      for (unsigned int k = 0; k < selectorValues[j].size(); k++){
+        selector_t selector = {selectorNames[j], selectorValues[j][k]};
+        inverted.complexes[inverted.complexes.size()-1].push_back(selector);
+      }
+    }
+  }
+
+  return inverted;
+}
+
 void Star::print(){
   std::cout << "{";
   for (unsigned int i = 0; i < complexes.size(); i++){

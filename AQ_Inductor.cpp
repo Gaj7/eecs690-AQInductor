@@ -152,6 +152,7 @@ void AQ_Inductor::runAQ(int maxstar){
 	}
 }
 
+//modify and put selectors into priQ so that you can print them in order
 void AQ_Inductor::writeWithNeg(){
   //open file (create/overwrite)
 	fs.open(stripFileExtenstion(fileName) + ".with.negation.rul", std::fstream::out);
@@ -197,20 +198,18 @@ void AQ_Inductor::writeWithoutNeg(){
 		return;
 	}
 
-	// //loop through conceptStars and convert to rule
-	// for (unsigned int i = 0; i < conceptStars.size(); i++){ //foreach concept
-	// 	for (unsigned int j = 0; j < conceptStars[i].size(); j++){ //foreach star (within concept)
-	// 		for (unsigned int k = 0; k < conceptStars[i][j].complexes.size(); k++){ //foreach complex
-	// 			for (unsigned int l = 0; l < conceptStars[i][j].complexes[k].size(); l++){ //foreach selector
-	//
-	// 				// fs << "(" << conceptStars[i][j].complexes[k][l].attrName << ", not " <<  conceptStars[i][j].complexes[k][l].negValue << ") ";
-	// 				// if (l+1 != conceptStars[i][j].complexes[k].size())
-	// 				// 	fs << "& ";
-	// 			}
-	// 			fs << "-> (" << dp->decisionName << ", " << dp->conceptNames[i] << ")\n";
-	// 		}
-	// 	}
-	// }
+	//loop through INVERTED conceptStars and convert to rule
+	for (unsigned int i = 0; i < dp->conceptNames.size(); i++){	//foreach concept star
+		Star inverted = conceptStars[i].invert(dp->attributeNames, dp->attributeValues);
+		for (unsigned int j = 0; j < inverted.complexes.size(); j++){ //foreach complex
+			for (unsigned int k = 0; k < inverted.complexes[j].size(); k++){ //foreach selector
+				fs << "(" << inverted.complexes[j][k].attrName << ", " <<  inverted.complexes[j][k].negValue << ") ";
+				if (k+1 != inverted.complexes[j].size())
+					fs << "& ";
+			}
+			fs << "-> (" << dp->decisionName << ", " << dp->conceptNames[i] << ")\n";
+		}
+	}
 
   fs.close();
 }
