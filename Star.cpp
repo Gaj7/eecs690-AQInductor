@@ -142,8 +142,8 @@ Star Star::invert(std::vector<std::string> attributeNames, std::vector<std::vect
     }
 
     //expand complex into multiple complexes using list of selector values
+    inverted.complexes.resize(inverted.complexes.size()+1);
     for (unsigned int j = 0; j < selectorValues.size(); j++){ //foreach selector
-      inverted.complexes.resize(inverted.complexes.size()+1);
       for (unsigned int k = 0; k < selectorValues[j].size(); k++){
         selector_t selector = {selectorNames[j], selectorValues[j][k]};
         inverted.complexes[inverted.complexes.size()-1].push_back(selector);
