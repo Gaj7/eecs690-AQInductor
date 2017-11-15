@@ -134,21 +134,53 @@ Star Star::invert(std::vector<std::string> attributeNames, std::vector<std::vect
     for (unsigned int j = 0; j < complexes[i].size(); j++){ //foreach selector
       unsigned int attrIdx;
       for (attrIdx = 0; attributeNames[attrIdx] != complexes[i][j].attrName; attrIdx++); //NOTE: absolutely zero protection here. If the complex somehow doesn't have an attrName that exists in attributeNames, the program WILL seg fault
-      selectorValues.resize(selectorValues.size()+1);
-      selectorNames.push_back(attributeNames[attrIdx]);
-      for (unsigned int k = 0; k < attributeValues[attrIdx].size(); k++)
-        if (attributeValues[attrIdx][k] != complexes[i][j].negValue)
-          selectorValues[j].push_back(attributeValues[attrIdx][k]);
-    }
 
-    //expand complex into multiple complexes using list of selector values
-    inverted.complexes.resize(inverted.complexes.size()+1);
-    for (unsigned int j = 0; j < selectorValues.size(); j++){ //foreach selector
-      for (unsigned int k = 0; k < selectorValues[j].size(); k++){
-        selector_t selector = {selectorNames[j], selectorValues[j][k]};
-        inverted.complexes[inverted.complexes.size()-1].push_back(selector);
+      bool attrAlreadyExists = false;
+      unsigned int selIdx;
+      for (selIdx = 0; selIdx < selectorNames.size(); selIdx++)
+        if (selectorNames[selIdx] == attributeNames[attrIdx]){
+          attrAlreadyExists = true;
+          break;
+        }
+
+      if (attrAlreadyExists){
+        //selectorValues[selIdx].erase(complexes[i][j].negValue);
+        for (unsigned int k = 0; k < selectorValues[selIdx].size(); k++)
+          if (selectorValues[selIdx][k] == complexes[i][j].negValue)
+              selectorValues[selIdx].erase(selectorValues[selIdx].begin() + k);
+      }
+      else{
+        selectorValues.resize(selectorValues.size()+1);
+        selectorNames.push_back(attributeNames[attrIdx]);
+        for (unsigned int k = 0; k < attributeValues[attrIdx].size(); k++)
+          if (attributeValues[attrIdx][k] != complexes[i][j].negValue)
+            selectorValues[j].push_back(attributeValues[attrIdx][k]);
       }
     }
+
+    //debug print selector names/values
+    std::cout << "Rule " << i << ": \n";
+    for (unsigned int x = 0; x < selectorValues.size(); x++){
+      std::cout << selectorNames[x] << ": ";
+      for (unsigned int y = 0; y < selectorValues[x].size(); y++)
+        std::cout<< selectorValues[x][y] << " ";
+      std::cout << '\n';
+    } std::cout << '\n';
+
+    // //expand complex into multiple complexes using list of selector values
+    // unsigned int numComplexes = 1;
+    // for (unsigned int j = 0; j < selectorValues.size(); j++)
+    //   numComplexes *= selectorValues[j].size();
+    // unsigned int oldSize = inverted.complexes.size();
+    // inverted.complexes.resize(oldSize + numComplexes);
+    // for (unsigned int j = 0; j < selectorValues.size(); j++){ //foreach selector
+    //   for (unsigned int k = 0; k < selectorValues[j].size(); k++){
+    //     selector_t selector = {selectorNames[j], selectorValues[j][k]};
+    //     unsigned int reps = numComplexes/selectorValues.size();
+    //     for (unsigned int l = 0; l < reps; l++)
+    //       inverted.complexes[oldSize + k*reps + l].push_back(selector);
+    //   }
+    // }
   }
 
   return inverted;
