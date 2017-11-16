@@ -16,6 +16,9 @@ class Star {
 		bool isSuperset(std::vector<selector_t> c1, std::vector<selector_t> c2);
 		void simplify();
 
+		//recursive helper function for invert
+		Star recExpand(unsigned int selIdx, std::vector<std::string> selectorNames, std::vector<std::vector<std::string>> selectorValues);
+
 	public:
 		std::vector<std::vector<selector_t>> complexes;
 

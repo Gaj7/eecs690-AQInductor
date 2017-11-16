@@ -125,6 +125,25 @@ void Star::concat(Star s){
   simplify();
 }
 
+Star Star::recExpand(unsigned int selIdx, std::vector<std::string> selectorNames, std::vector<std::vector<std::string>> selectorValues){
+  Star s;
+  for (unsigned int i = 0; i < selectorValues[selIdx].size(); i++)
+    s.addSelector(selectorNames[selIdx], selectorValues[selIdx][i]);
+
+  //base case
+  if (selIdx == selectorNames.size()-1){
+    return s;
+  }
+  else{
+    Star mergeStar = recExpand(selIdx+1, selectorNames, selectorValues);
+    return Star(s, mergeStar);
+  }
+}
+
+//Inverting actually isn't a concept in AQ. It is my own abstraction, useful for generating non-negated rules.
+//"Inverting" a star simply returns a star where each selector is expanded to include all values except for the original
+//perhaps it doesn't really belong in the star class since the "negated values" arent actually representing negated
+// values here, but the Star functions are really useful for this
 Star Star::invert(std::vector<std::string> attributeNames, std::vector<std::vector<std::string>> attributeValues){
   Star inverted;
   for (unsigned int i = 0; i < complexes.size(); i++){      //foreach complex
@@ -144,7 +163,6 @@ Star Star::invert(std::vector<std::string> attributeNames, std::vector<std::vect
         }
 
       if (attrAlreadyExists){
-        //selectorValues[selIdx].erase(complexes[i][j].negValue);
         for (unsigned int k = 0; k < selectorValues[selIdx].size(); k++)
           if (selectorValues[selIdx][k] == complexes[i][j].negValue)
               selectorValues[selIdx].erase(selectorValues[selIdx].begin() + k);
@@ -158,29 +176,18 @@ Star Star::invert(std::vector<std::string> attributeNames, std::vector<std::vect
       }
     }
 
-    //debug print selector names/values
-    std::cout << "Rule " << i << ": \n";
-    for (unsigned int x = 0; x < selectorValues.size(); x++){
-      std::cout << selectorNames[x] << ": ";
-      for (unsigned int y = 0; y < selectorValues[x].size(); y++)
-        std::cout<< selectorValues[x][y] << " ";
-      std::cout << '\n';
-    } std::cout << '\n';
-
-    // //expand complex into multiple complexes using list of selector values
-    // unsigned int numComplexes = 1;
-    // for (unsigned int j = 0; j < selectorValues.size(); j++)
-    //   numComplexes *= selectorValues[j].size();
-    // unsigned int oldSize = inverted.complexes.size();
-    // inverted.complexes.resize(oldSize + numComplexes);
-    // for (unsigned int j = 0; j < selectorValues.size(); j++){ //foreach selector
-    //   for (unsigned int k = 0; k < selectorValues[j].size(); k++){
-    //     selector_t selector = {selectorNames[j], selectorValues[j][k]};
-    //     unsigned int reps = numComplexes/selectorValues.size();
-    //     for (unsigned int l = 0; l < reps; l++)
-    //       inverted.complexes[oldSize + k*reps + l].push_back(selector);
-    //   }
+    // //debug print selector names/values
+    // std::cout << "\nRule " << i << ": \n";
+    // for (unsigned int x = 0; x < selectorValues.size(); x++){
+    //   std::cout << selectorNames[x] << ": ";
+    //   for (unsigned int y = 0; y < selectorValues[x].size(); y++)
+    //     std::cout<< selectorValues[x][y] << " ";
+    //   std::cout << '\n';
     // }
+
+    //expand complex into multiple complexes using list of selector values
+    //call recursive func here:
+    inverted.concat(recExpand(0, selectorNames, selectorValues));
   }
 
   return inverted;
