@@ -38,14 +38,19 @@ int main(int argc, char* argv[]){
 			std::cin >> maxstar;
 
 			aqi->runAQ(maxstar);
+			std::cout << "Done running AQ.\n";
 			aqi->writeWithNeg();
+			std::cout << "Done writing negated ruleset.\n";
 			aqi->writeWithoutNeg();
+			std::cout << "Done writing non-negated ruleset.\n";
 
 		} catch (std::string excep){
 			std::cerr << "Error: " << excep << "\nPlease retry:\n";
 			error = true;
 		}
 	} while (error);
+
+	std::cout << "Exiting.\n";
 
 	delete aqi;
 	return 0;
