@@ -13,6 +13,9 @@ AQ_Inductor.o: AQ_Inductor.hpp AQ_Inductor.cpp
 Star.o: Star.hpp Star.cpp
 	g++ -std=c++11 -g -Wall -c Star.cpp
 
+run: project
+	./project
+
 clean:
 	rm *.o project
 
