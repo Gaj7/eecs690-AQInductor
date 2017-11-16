@@ -131,13 +131,10 @@ Star Star::recExpand(unsigned int selIdx, std::vector<std::string> selectorNames
     s.addSelector(selectorNames[selIdx], selectorValues[selIdx][i]);
 
   //base case
-  if (selIdx == selectorNames.size()-1){
+  if (selIdx == selectorNames.size()-1)
     return s;
-  }
-  else{
-    Star mergeStar = recExpand(selIdx+1, selectorNames, selectorValues);
-    return Star(s, mergeStar);
-  }
+  else
+    return Star(s, recExpand(selIdx+1, selectorNames, selectorValues));
 }
 
 //Inverting actually isn't a concept in AQ. It is my own abstraction, useful for generating non-negated rules.
@@ -168,11 +165,13 @@ Star Star::invert(std::vector<std::string> attributeNames, std::vector<std::vect
               selectorValues[selIdx].erase(selectorValues[selIdx].begin() + k);
       }
       else{
-        selectorValues.resize(selectorValues.size()+1);
+        std::vector<std::string> values;
         selectorNames.push_back(attributeNames[attrIdx]);
-        for (unsigned int k = 0; k < attributeValues[attrIdx].size(); k++)
+        for (unsigned int k = 0; k < attributeValues[attrIdx].size(); k++){
           if (attributeValues[attrIdx][k] != complexes[i][j].negValue)
-            selectorValues[j].push_back(attributeValues[attrIdx][k]);
+            values.push_back(attributeValues[attrIdx][k]);
+        }
+        selectorValues.push_back(values);
       }
     }
 
