@@ -69,7 +69,7 @@ Star::Star(){
 
   at some point, loop through new star comparing complexes and identify and remove redundant complexes (superset of other complexes)
 */
-Star::Star(Star s1, Star s2){
+Star::Star(Star s1, Star s2, bool simpl){
   //special cases if s1 or s2 are empty
   if(s1.complexes.empty()){
     complexes = s2.complexes;
@@ -102,7 +102,8 @@ Star::Star(Star s1, Star s2){
   }
 
   //eliminate redundant supersets
-  simplify();
+  if (simpl)
+    simplify();
 }
 
 void Star::addSelector(std::string attrName, std::string negValue){
@@ -117,12 +118,13 @@ void Star::reduce(int maxstar){
     complexes.resize(maxstar); //just shortens to length of maxstar, arbitrarily cutting off latter complexes
 }
 
-void Star::concat(Star s){
+void Star::concat(Star s, bool simpl){
   for (unsigned int i = 0; i < s.complexes.size(); i++)
     complexes.push_back(s.complexes[i]);
 
   //eliminates redundant supersets
-  simplify();
+  if (simpl)
+    simplify();
 }
 
 Star Star::recExpand(unsigned int selIdx, std::vector<std::string> selectorNames, std::vector<std::vector<std::string>> selectorValues){
@@ -134,7 +136,7 @@ Star Star::recExpand(unsigned int selIdx, std::vector<std::string> selectorNames
   if (selIdx == selectorNames.size()-1)
     return s;
   else
-    return Star(s, recExpand(selIdx+1, selectorNames, selectorValues));
+    return Star(s, recExpand(selIdx+1, selectorNames, selectorValues), false);
 }
 
 //Inverting actually isn't a concept in AQ. It is my own abstraction, useful for generating non-negated rules.
@@ -186,9 +188,10 @@ Star Star::invert(std::vector<std::string> attributeNames, std::vector<std::vect
 
     //expand complex into multiple complexes using list of selector values
     //call recursive func here:
-    inverted.concat(recExpand(0, selectorNames, selectorValues));
+    inverted.concat(recExpand(0, selectorNames, selectorValues), false);
   }
 
+  inverted.simplify();
   return inverted;
 }
 
