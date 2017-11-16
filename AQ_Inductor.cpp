@@ -55,7 +55,7 @@ Star AQ_Inductor::calcPartialStar(int posCase, std::vector<int> negCases){
 			}
 			/*debug:*/ if(debug) {std::cout << "G(" << posCase << "|" << negCases[i] << ")\n";
 			/*debug:*/      		  std::cout << "caseStar: "; caseStar.print();}
-			partialStar = Star(partialStar, caseStar, true);
+			partialStar = Star(partialStar, caseStar, false);
 			/*debug:*/ if(debug) {std::cout << "partialStar: "; partialStar.print(); std::cout << std::endl;}
 			/*TEST (BIG IF TRUE):*/ partialStar.reduce(1); //can I reduce at this level?
 														//assuming reduce is arbitrary I really think nothing is lost be recducing early like this
@@ -142,7 +142,7 @@ void AQ_Inductor::runAQ(int maxstar){
 			if (!isCovered(positiveCases[j], conceptStar)){ //<-TODO
 				Star partial = calcPartialStar(positiveCases[j], negativeCases);
 				partial.reduce(maxstar);
-				conceptStar.concat(partial, true);
+				conceptStar.concat(partial, false);
 			}
 			else if (debug)
 				std::cout << "Positive case " << positiveCases[j] << " is already covered, no need to calculate G(" << positiveCases[j] << "|U)\n";
