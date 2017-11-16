@@ -5,18 +5,3 @@ How to use this program:
        assumes input/output files reside in a subfolder "data").
   2. Run the program with "./project"
     A. You can run with launch option "debug" to enable console debug logging
-
-------------------------------------------------------------------------------------
-TODO:
-- implement generation of rules without negation
-- select maxstar by best (most cases covered)
-
-- after core functionality is done, might need to work on optimization
-  - I imagine switching complex vectors to queues would greatly reduce complexity of simplify() as a result of not having to call erase()
-  - rework Star::simplify() such that elements can be checked right before being added rather than at the end
-
-COMPLETED, but could use more tests:
-- fix isCovered and re-add appropriate checks
-- make star concat(union) not add redundant entries
-- calc if dataset is consistent
-- implement discretization
