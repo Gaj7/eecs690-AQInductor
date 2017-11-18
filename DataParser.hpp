@@ -11,11 +11,8 @@ class DataParser {
 		bool debug;
 		std::ifstream fs;
 
-		//gets the next non-comment line, throws an exception on eof
-		std::string gitGudLine();
-		//returns a substring of the first sequence of chars separated by whitespace, modifies line to remove returned substring
-		//returns empty string if no word in string
-		std::string gitGudWord(std::string &line);
+		//gets next whitespace separated string not in a comment
+		std::string gitGudWord();
 
 		bool isNum(std::string s);
 		std::string doubleToStr(double num);

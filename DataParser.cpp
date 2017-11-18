@@ -1,40 +1,21 @@
 #include "DataParser.hpp"
 
 //Private functions
-std::string DataParser::gitGudLine(){
-	std::string currentLine;
-	do{
-		getline(fs, currentLine);
-		if(fs.eof())
+
+//gets next whitespace separated string not in a comment
+std::string DataParser::gitGudWord(){
+	std::string buf;
+	while (true){
+		fs >> buf;
+		if(fs.eof()){
 			throw std::string("Cannot get next line, EOF.");
-	} while (currentLine[0] == '!');
-	return currentLine;
-}
-
-//returns a substring of the first sequence of chars separated by whitespace, modifies line to remove returned substring
-//returns empty string if no word in string
-std::string DataParser::gitGudWord(std::string &line){
-	bool found = false;
-	int beginPos;
-	for(unsigned int i = 0; i < line.length(); i++){
-		if(!found && !isspace(line[i])){
-			found = true;
-			beginPos = i;
+			return "";
 		}
-		else if (found && isspace(line[i])){
-			std::string retStr = line.substr(beginPos, i-beginPos);
-			line = line.substr(i);
-			return retStr;
-		}
+		else if (buf[0] == '!')
+			getline(fs, buf);
+		else
+			return buf;
 	}
-	if(found){
-		std::string retStr = line.substr(beginPos);
-		line.clear();
-		return retStr;
-	}
-
-	line.clear();
-	return std::string();
 }
 
 //std::stod works for extracting doubles, but it doesn't give any feedback as to whether or not the passed string is *exactly* a number with no other extraneous characters. For example, it might read 25 from "25..30" when we don't even want to consider that string a number
@@ -180,19 +161,23 @@ DataParser::DataParser(std::string fileName, bool debug=false){
 		return;
 	}
 
-	std::string inpStr = gitGudLine();
+	std::string buf = "";
+	while (buf != "[") {fs >> buf;} //move fs to beginning of datatable
 
-	//we will just assume first line is a series of 'a's and one d at the end, as per the project inpstructions
-	n_attributes = (inpStr.length()-5)/2; //we just need to calc the number of 'a's
-	attributeNames.resize(n_attributes);
+	std::vector<std::string> nameVector;
+	buf = gitGudWord();
+	while (buf != "]"){
+		nameVector.push_back(buf);
+		buf = gitGudWord();
+	};
 
-	inpStr = gitGudLine();
-	inpStr = inpStr.substr(2, inpStr.length()-4); //trim off brackets
-	for(int i = 0; i < n_attributes; i++)
-		attributeNames[i] = gitGudWord(inpStr);
-	decisionName = gitGudWord(inpStr);
-
+	n_attributes = (signed)nameVector.size() -1;
 	attributeValues.resize(n_attributes);
+	attributeNames.resize(n_attributes);
+	for (int i = 0; i < n_attributes; i++)
+		attributeNames[i] = nameVector[i];
+	decisionName = nameVector[n_attributes];
+
 	this->debug = debug;
 }
 
@@ -206,24 +191,14 @@ DataParser::~DataParser(){
 
 //returns empty vector if eof
 std::vector<std::string> DataParser::parseRow(){
-	std::string inpStr;
-	try{
-		inpStr = gitGudLine();
-	} catch (std::string e) {
-		return std::vector<std::string>(0);  //empty vector
-	}
-
 	std::vector<std::string> row(n_attributes+1);
-
-	for(int i = 0; i < n_attributes; i++){
-		row[i] = gitGudWord(inpStr);
-		if(row[i].empty())
+	for (int i = 0; i < n_attributes+1; i++){
+		try{
+			row[i] = gitGudWord();
+		} catch (std::string e) {
 			return std::vector<std::string>(0);  //empty vector
+		}
 	}
-	row[n_attributes] = gitGudWord(inpStr);
-	if(row[n_attributes].empty())
-		return std::vector<std::string>(0);  //empty vector
-
 	return row;
 }
 
