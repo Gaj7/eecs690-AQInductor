@@ -55,10 +55,9 @@ Star AQ_Inductor::calcPartialStar(int posCase, std::vector<int> negCases){
 			}
 			/*debug:*/ if(debug) {std::cout << "G(" << posCase << "|" << negCases[i] << ")\n";
 			/*debug:*/      		  std::cout << "caseStar: "; caseStar.print();}
-			partialStar = Star(partialStar, caseStar, false);
+			partialStar = Star(partialStar, caseStar, false); //bool here decides if we want to simplify at this step -- that is take the time to look for and eliminate redundancy/supersets.
 			/*debug:*/ if(debug) {std::cout << "partialStar: "; partialStar.print(); std::cout << std::endl;}
-			/*TEST (BIG IF TRUE):*/ partialStar.reduce(1); //can I reduce at this level?
-														//assuming reduce is arbitrary I really think nothing is lost be recducing early like this
+			partialStar.reduce(1); //assuming reduce is arbitrary I really think nothing is lost be recducing early like this
 		}
 		else if (debug)
 			std::cout << "Negative case " << negCases[i] << " isn't covered, no need to calculate G(" << posCase << "|" << negCases[i] << ")\n";
@@ -142,12 +141,13 @@ void AQ_Inductor::runAQ(int maxstar){
 			if (!isCovered(positiveCases[j], conceptStar)){ //<-TODO
 				Star partial = calcPartialStar(positiveCases[j], negativeCases);
 				partial.reduce(maxstar);
-				conceptStar.concat(partial, false);
+				conceptStar.concat(partial, false); //bool here decides if we want to simplify at this step -- that is take the time to look for and eliminate redundancy/
 			}
 			else if (debug)
 				std::cout << "Positive case " << positiveCases[j] << " is already covered, no need to calculate G(" << positiveCases[j] << "|U)\n";
 		}
 
+		//conceptStar.simplify(); //experimental <- doesn't seem to accomplish anything?
 		conceptStars.push_back(conceptStar);
 	}
 }

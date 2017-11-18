@@ -187,11 +187,10 @@ Star Star::invert(std::vector<std::string> attributeNames, std::vector<std::vect
     // }
 
     //expand complex into multiple complexes using list of selector values
-    //call recursive func here:
     inverted.concat(recExpand(0, selectorNames, selectorValues), false); //simplify here?
   }
 
-  //inverted.simplify();
+  //inverted.simplify(); //<- don't think trade off is worth it. Adds 4+ minutes (~2500% increase in total time) on german.txt, and reduces negated ruleset from ~30k rules to 24k rules.
   return inverted;
 }
 
