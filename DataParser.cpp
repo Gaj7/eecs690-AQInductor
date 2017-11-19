@@ -41,16 +41,19 @@ bool DataParser::isNum(std::string s){
 }
 
 //trim result from std::to_string
-std::string DataParser::doubleToStr(double num){ //!seg faulting on some cases // no longer seg faulting, but seems to hang for a little bit at random intervals
+std::string DataParser::doubleToStr(double num){
 	std::string str = std::to_string(num);
 	//std::cout << "\n" << str << "\n";
 
 	unsigned int trimPos;
-	for (trimPos = str.length()-1; trimPos > 0; trimPos--)
-		if(str[trimPos] != '0' && str[trimPos] != '.')
-			break;
+	for (trimPos = str.length()-1; trimPos > 0; trimPos--){
+		if(str[trimPos] == '.')
+			return str.substr(0, trimPos);
+		if(str[trimPos] != '0')
+			return str.substr(0, trimPos+1);
+		}
 
-	return str.substr(0, trimPos+1);
+	return str;
 }
 
 int DataParser::discretizeAttribute(int attrIdx){
